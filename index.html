@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>COLINKS by IRS</title>
     <link href="https://fonts.googleapis.com/css2?family=Share+Tech&display=swap" rel="stylesheet">
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
     <style>
         :root {
             --primary: #2563eb;
@@ -122,6 +123,34 @@
             gap: 15px;
             width: 300px;
         }
+        
+        /* Gaya untuk pemisah "ATAU" */
+        .divider-container {
+            display: flex;
+            align-items: center;
+            text-align: center;
+            margin: 5px 0;
+        }
+        .divider-line {
+            flex-grow: 1;
+            height: 2px;
+            background-color: var(--border);
+        }
+        .divider-text {
+            padding: 0 10px;
+            color: var(--text);
+            font-weight: bold;
+            font-size: 14px;
+            opacity: 0.6;
+        }
+
+        /* Container tombol Google Login */
+        .google-login-wrapper {
+            display: flex;
+            justify-content: center;
+            width: 100%;
+        }
+
         .passcode-input {
             width: 100%; padding: 12px;
             background: var(--input-bg); border: 2px solid var(--border);
@@ -130,6 +159,7 @@
             box-sizing: border-box; outline: none; transition: all 0.3s;
         }
         .passcode-input:focus { border-color: var(--primary); box-shadow: 0 0 10px var(--primary); }
+        
         .btn-passcode {
             background: var(--primary); color: white;
             border: none; padding: 12px; font-size: 16px;
@@ -318,6 +348,32 @@
     <div id="lockScreen" class="lock-screen">
         <div id="emojiDisplay" class="emoji-display anim-idle">👀</div>
         <div class="passcode-box">
+            
+            <div class="google-login-wrapper">
+                <div id="g_id_onload"
+                     data-client_id="151782765319-5klk78b5lqrcnaaqqu7k0mqiqhbmonf1.apps.googleusercontent.com"
+                     data-context="signin"
+                     data-ux_mode="popup"
+                     data-callback="handleCredentialResponse"
+                     data-auto_prompt="false">
+                </div>
+                <div class="g_id_signin"
+                     data-type="standard"
+                     data-shape="rectangular"
+                     data-theme="outline"
+                     data-text="signin_with"
+                     data-size="large"
+                     data-logo_alignment="left"
+                     data-width="236">
+                </div>
+            </div>
+
+            <div class="divider-container">
+                <div class="divider-line"></div>
+                <div class="divider-text">ATAU</div>
+                <div class="divider-line"></div>
+            </div>
+
             <input type="password" id="passcodeInput" class="passcode-input" placeholder="Masukkan Kode" onkeypress="handleEnter(event)">
             <button class="btn-passcode" onclick="verifyCode()">BUKA BRANKAS</button>
         </div>
@@ -480,6 +536,18 @@
         });
     }
 
+    // --- LOGIKA GOOGLE LOGIN (BARU) ---
+    // Fungsi ini akan dipanggil otomatis oleh Google jika login berhasil
+    function handleCredentialResponse(response) {
+        if(response.credential) {
+            // Jika Anda ingin mengekstrak data nama/email dari token JWT, Anda perlu script tambahan.
+            // Untuk saat ini, asalkan responnya ada (login berhasil), kita buka aplikasinya.
+            triggerSuccessAnimation();
+        } else {
+            triggerErrorAnimation();
+        }
+    }
+
     // --- LOGIKA PASSCODE & EMOJI ---
     function handleEnter(e) {
         if (e.key === 'Enter') verifyCode();
@@ -487,36 +555,43 @@
 
     function verifyCode() {
         const inputVal = document.getElementById('passcodeInput').value;
+        if(inputVal === '0.Rahasia.0') {
+            triggerSuccessAnimation();
+        } else {
+            triggerErrorAnimation();
+        }
+    }
+
+    function triggerSuccessAnimation() {
         const emoji = document.getElementById('emojiDisplay');
         const lockScreen = document.getElementById('lockScreen');
         const mainApp = document.getElementById('mainApp');
 
-        if(inputVal === '0.Rahasia.0') {
-            // Animasi Benar
-            emoji.innerText = '😎';
-            emoji.className = 'emoji-display anim-success';
-            
+        emoji.innerText = '😎';
+        emoji.className = 'emoji-display anim-success';
+        
+        setTimeout(() => {
+            lockScreen.style.transform = 'scale(1.2)';
+            lockScreen.style.opacity = '0';
             setTimeout(() => {
-                lockScreen.style.transform = 'scale(1.2)';
-                lockScreen.style.opacity = '0';
-                setTimeout(() => {
-                    lockScreen.style.display = 'none';
-                    mainApp.style.display = 'flex'; // Munculkan Aplikasi
-                    renderLinks(); // Render saat pertama kali masuk
-                }, 500);
-            }, 800);
-        } else {
-            // Animasi Salah
-            emoji.innerText = '😡';
-            emoji.className = 'emoji-display anim-error';
-            
-            // Kembalikan ke emoji diam setelah marah selesai
-            setTimeout(() => {
-                emoji.innerText = '👀';
-                emoji.className = 'emoji-display anim-idle';
-                document.getElementById('passcodeInput').value = ''; // Reset input
-            }, 600);
-        }
+                lockScreen.style.display = 'none';
+                mainApp.style.display = 'flex'; // Munculkan Aplikasi
+                renderLinks(); // Render saat pertama kali masuk
+            }, 500);
+        }, 800);
+    }
+
+    function triggerErrorAnimation() {
+        const emoji = document.getElementById('emojiDisplay');
+        emoji.innerText = '😡';
+        emoji.className = 'emoji-display anim-error';
+        
+        // Kembalikan ke emoji diam setelah marah selesai
+        setTimeout(() => {
+            emoji.innerText = '👀';
+            emoji.className = 'emoji-display anim-idle';
+            document.getElementById('passcodeInput').value = ''; // Reset input
+        }, 600);
     }
 
     function openLink(url) {
