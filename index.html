@@ -88,50 +88,51 @@
             transition: opacity 0.5s ease, transform 0.5s ease;
         }
 
-        /* --- ANIMASI SVG KARAKTER --- */
+        /* --- ANIMASI SVG PREMIUM (SECURITY DRONE) --- */
         .anim-container {
-            width: 200px;
-            height: 180px;
-            margin-bottom: -10px; 
+            width: 220px;
+            height: 160px;
+            margin-bottom: -15px; 
             position: relative;
             z-index: 2;
         }
-        .svg-character { width: 100%; height: 100%; overflow: visible; transition: transform 0.3s ease; }
-        #head, #body-part, #hand { transition: fill 0.3s ease, transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
-        #eyes circle { transition: transform 0.2s ease, ry 0.2s ease; }
-        #eyebrows line { transition: transform 0.3s ease; transform-origin: center; }
-        #mouth { transition: d 0.3s ease, fill 0.3s ease; }
-        #error-text, #hand-group { opacity: 0; transition: opacity 0.3s ease, transform 0.3s ease; }
-
-        /* SVG States */
-        .state-idle #character-group { transform: translateY(50px); }
-        .state-idle .eye { animation: blink 4s infinite; }
-        .state-idle #mouth { d: path("M 85 110 Q 100 110 115 110"); }
+        .svg-character { width: 100%; height: 100%; overflow: visible; }
         
-        .state-error #character-group { transform: translateY(0); }
-        .state-error #head, .state-error #hand-color { fill: var(--danger); }
-        .state-error .brow-l { transform: rotate(25deg) translateY(5px); }
-        .state-error .brow-r { transform: rotate(-25deg) translateY(5px); }
-        .state-error #mouth { d: path("M 85 115 Q 100 100 115 115"); } 
-        .state-error #error-text { opacity: 1; transform: translateY(-10px); }
-        .state-error #hand-group { opacity: 1; transform: translateY(-20px) translateX(-20px); }
-        .state-error.shake-anim { animation: shakeBox 0.4s ease-in-out; }
+        /* Elements */
+        #drone-head { transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), fill 0.3s; }
+        #drone-screen { fill: #000; stroke: var(--primary); stroke-width: 2; transition: stroke 0.3s; }
+        .led-eye { fill: var(--primary); transition: opacity 0.3s, fill 0.3s; }
+        #led-scan { animation: scanning 2s infinite ease-in-out; }
+        #led-angry, #led-happy { opacity: 0; }
+        #msg-popup { opacity: 0; transition: opacity 0.3s, transform 0.3s; transform: translateY(10px); }
 
-        .state-success #character-group { transform: translateY(0); }
-        .state-success #head { fill: var(--success); }
-        .state-success .brow-l { transform: translateY(-5px); }
-        .state-success .brow-r { transform: translateY(-5px); }
-        .state-success .eye { rx: 5; ry: 2; transform: translateY(-2px); }
-        .state-success #mouth { d: path("M 80 105 Q 100 130 120 105"); fill: white; }
+        /* Animations */
+        @keyframes scanning { 0%, 100% { transform: translateX(-20px); } 50% { transform: translateX(20px); } }
+        @keyframes drone-bob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
 
-        @keyframes blink { 0%, 96%, 100% { transform: scaleY(1); } 98% { transform: scaleY(0.1); } }
-        @keyframes shakeBox { 0%, 100% { transform: translateX(0); } 20%, 60% { transform: translateX(-10px); } 40%, 80% { transform: translateX(10px); } }
+        /* States */
+        .state-idle #drone-head { transform: translateY(60px); animation: drone-bob 3s infinite ease-in-out; }
+        
+        .state-error #drone-head { transform: translateY(15px) scale(1.1); }
+        .state-error #drone-screen { stroke: var(--danger); }
+        .state-error #led-scan { opacity: 0; }
+        .state-error #led-angry { opacity: 1; fill: var(--danger); }
+        .state-error #msg-popup { opacity: 1; transform: translateY(0); }
+        .state-error.shake { animation: shakeBox 0.4s ease-in-out; }
 
+        .state-success #drone-head { transform: translateY(15px); }
+        .state-success #drone-screen { stroke: var(--success); }
+        .state-success #led-scan { opacity: 0; }
+        .state-success #led-happy { opacity: 1; fill: var(--success); }
+
+        @keyframes shakeBox { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-10px); } 75% { transform: translateX(10px); } }
+
+        /* --- KOTAK INPUT --- */
         .passcode-box {
             background: var(--card-bg);
             padding: 30px 25px;
             border: 2px solid var(--border);
-            border-radius: 0; /* UJUNG LANCIP */
+            border-radius: 0; 
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
             display: flex;
             flex-direction: column;
@@ -160,16 +161,15 @@
         .btn-passcode:active { transform: translateY(2px); box-shadow: 0 2px 0 rgba(0,0,0,0.2); }
 
         /* --- APLIKASI UTAMA --- */
-        .main-wrapper {
-            display: flex;
+        #mainApp {
+            display: none; /* Dikelola JS */
             flex-direction: column;
             align-items: center;
             width: 100%;
             max-width: 600px;
-            gap: 10px; /* Jarak antara judul dan kotak utama */
+            gap: 10px;
             position: relative;
             z-index: 5;
-            display: none; /* Disembunyikan sampai passcode benar */
             opacity: 0;
             transition: opacity 0.5s ease;
         }
@@ -250,38 +250,44 @@
 
     <div id="lockScreen" class="lock-screen">
         <div class="anim-container">
-            <svg viewBox="0 0 200 180" class="svg-character state-idle" id="svgAnim">
-                <text id="error-text" x="100" y="30" text-anchor="middle" fill="var(--danger)" font-family="Share Tech" font-size="22" font-weight="bold" letter-spacing="1">KAMU SIAPA?!</text>
-                <g id="character-group">
-                    <circle cx="100" cy="100" r="45" fill="var(--primary)" id="head"/>
-                    <g id="face">
-                        <g id="eyes">
-                            <ellipse cx="82" cy="90" rx="5" ry="5" fill="#fff" class="eye"/>
-                            <ellipse cx="118" cy="90" rx="5" ry="5" fill="#fff" class="eye"/>
+            <svg viewBox="0 0 200 160" class="svg-character state-idle" id="svgAnim">
+                <g id="msg-popup">
+                    <rect x="50" y="5" width="100" height="30" fill="var(--danger)" stroke="white" stroke-width="2"/>
+                    <text x="100" y="25" text-anchor="middle" fill="white" font-family="Share Tech" font-size="14" font-weight="bold">KAMU SIAPA?!</text>
+                </g>
+                
+                <g id="drone-head">
+                    <path id="drone-shell" d="M40,80 L60,40 L140,40 L160,80 L140,120 L60,120 Z" fill="var(--card-bg)" stroke="var(--primary)" stroke-width="4"/>
+                    <path id="drone-screen" d="M55,80 L65,55 L135,55 L145,80 L135,105 L65,105 Z" fill="#111"/>
+                    
+                    <g id="led-eyes">
+                        <rect id="led-scan" class="led-eye" x="90" y="77" width="20" height="6"/>
+                        
+                        <g id="led-angry" class="led-eye">
+                            <line x1="70" y1="70" x2="90" y2="90" stroke="currentColor" stroke-width="4"/>
+                            <line x1="90" y1="70" x2="70" y2="90" stroke="currentColor" stroke-width="4"/>
+                            <line x1="110" y1="70" x2="130" y2="90" stroke="currentColor" stroke-width="4"/>
+                            <line x1="130" y1="70" x2="110" y2="90" stroke="currentColor" stroke-width="4"/>
                         </g>
-                        <g id="eyebrows" stroke="#fff" stroke-width="3" stroke-linecap="square">
-                            <line x1="72" y1="78" x2="92" y2="78" class="brow-l"/>
-                            <line x1="108" y1="78" x2="128" y2="78" class="brow-r"/>
+
+                        <g id="led-happy" class="led-eye" fill="none" stroke="currentColor" stroke-width="4">
+                            <polyline points="70,85 80,70 90,85"/>
+                            <polyline points="110,85 120,70 130,85"/>
                         </g>
-                        <path id="mouth" d="M 85 110 Q 100 110 115 110" stroke="#fff" stroke-width="3" fill="none" stroke-linecap="round"/>
                     </g>
                 </g>
-                <rect x="0" y="140" width="200" height="40" fill="var(--card-bg)" stroke="var(--border)" stroke-width="4"/>
-                <g id="hand-group">
-                    <path d="M 120 180 L 160 140 L 175 145 L 130 190 Z" fill="var(--danger)" id="hand-color"/>
-                    <circle cx="168" cy="142" r="8" fill="var(--danger)"/>
-                </g>
+                <rect x="0" y="130" width="200" height="30" fill="var(--card-bg)" stroke="var(--border)" stroke-width="2"/>
             </svg>
         </div>
 
         <div class="passcode-box">
             <h2 class="box-title">BRANKAS</h2>
-            <input type="password" id="passcodeInput" class="passcode-input" placeholder="KODE RAHASIA" onkeypress="handleEnter(event)">
+            <input type="password" id="passcodeInput" class="passcode-input" placeholder="KODE RAHASIA" onkeypress="handleEnter(event)" onfocus="droneLookDown()" onblur="droneLookIdle()">
             <button class="btn-passcode" onclick="verifyCode()">MASUK</button>
         </div>
     </div>
 
-    <div class="main-wrapper" id="mainApp">
+    <div id="mainApp">
         <div class="title-card">
             <h1>COLINKS</h1>
         </div>
@@ -365,219 +371,128 @@
 
 <script>
     // ==============================================================================
-    // [RUANG ISI LINK] - TARUH LINK ANDA DI BAWAH INI SESUAI KATEGORI!
+    // [RUANG ISI LINK]
     // ==============================================================================
-    const linkMateri = [
-        { name: "Contoh Materi 1", url: "https://contoh-materi.com" },
-        { name: "Contoh Materi 2", url: "https://contoh-materi.com" }
-    ];
-    const linkAplikasi = [
-        { name: "REFORNAM by IRS", url: "https://refornam.vercel.app/" }, 
-        { name: "GETOCK by IRS", url: "https://getock.vercel.app/" }
-    ];
-    const linkLainnya = [
-        { name: "Website Lain 1", url: "https://google.com" }
-    ];
-    // ==============================================================================
+    const linkMateri = [{ name: "Contoh Materi 1", url: "https://contoh.com" }];
+    const linkAplikasi = [{ name: "REFORNAM", url: "https://refornam.vercel.app/" }];
+    const linkLainnya = [{ name: "Google", url: "https://google.com" }];
 
-
-    // ==============================================================================
-    // LOGIKA AUTO-LOGIN & RESET TENGAH MALAM
-    // ==============================================================================
     const lockScreen = document.getElementById('lockScreen');
     const mainApp = document.getElementById('mainApp');
     const svgAnim = document.getElementById('svgAnim');
     const PASSCODE_CORRECT = '0.Rahasia.0';
 
-    // Memeriksa status login saat halaman dimuat
+    // --- FIX: LOGIKA LOGIN & REFRESH ---
     function checkLoginStatus() {
         const storedLogin = localStorage.getItem('colinks_auth');
-        
         if (storedLogin) {
             const data = JSON.parse(storedLogin);
-            const now = new Date().getTime();
-            
-            if (now < data.expiry) {
-                // Masih dalam masa aktif, langsung buka aplikasi
-                openMainApp(false); 
-                updateExpiryTime(); // Perpanjang masa aktif ke jam 00:00 besoknya
-            } else {
-                // Sudah lewat jam 00:00 dan baru dibuka lagi -> Reset
-                localStorage.removeItem('colinks_auth');
+            if (new Date().getTime() < data.expiry) {
+                // Sesi valid, jangan tampilkan lockscreen sama sekali
+                lockScreen.style.display = 'none';
+                mainApp.style.display = 'flex';
+                mainApp.style.opacity = '1';
+                renderLinks();
+                updateExpiryTime(); // Refresh waktu reset ke besok
+                return;
             }
         }
+        // Jika tidak ada login atau expired
+        lockScreen.style.display = 'flex';
     }
 
-    // Menghitung target waktu reset (Jam 00:00 hari berikutnya)
     function getNextMidnight() {
-        const now = new Date();
-        const tomorrow = new Date(now);
-        tomorrow.setDate(tomorrow.getDate() + 1);
-        tomorrow.setHours(0, 0, 0, 0); // Set ke jam 00:00:00 tepat
-        return tomorrow.getTime();
+        const d = new Date();
+        d.setDate(d.getDate() + 1);
+        d.setHours(0, 0, 0, 0);
+        return d.getTime();
     }
 
-    // Memperbarui atau menyimpan data login ke LocalStorage
     function updateExpiryTime() {
-        const authData = {
-            isLoggedIn: true,
-            expiry: getNextMidnight()
-        };
-        localStorage.setItem('colinks_auth', JSON.stringify(authData));
+        localStorage.setItem('colinks_auth', JSON.stringify({ isLoggedIn: true, expiry: getNextMidnight() }));
     }
 
-    // Memantau aktivitas pengguna (Jika sedang aktif saat jam 00:00 terlewati, otomatis perpanjang)
+    // Pengecekan aktifitas di jam 00:00
     setInterval(() => {
-        const storedLogin = localStorage.getItem('colinks_auth');
-        if (storedLogin && mainApp.style.display === 'flex') {
-            const data = JSON.parse(storedLogin);
-            const now = new Date().getTime();
-            // Jika waktu saat ini sudah melebihi expiry TAPI user sedang aktif melihat aplikasi
-            if (now >= data.expiry) {
-                updateExpiryTime(); // Perpanjang tanpa memutus sesi
-            }
+        if (localStorage.getItem('colinks_auth') && mainApp.style.display === 'flex') {
+            updateExpiryTime();
         }
-    }, 60000); // Cek setiap 1 menit
+    }, 300000); // 5 Menit sekali
 
-    // Jalankan pengecekan saat pertama dibuka
-    checkLoginStatus();
-
-
-    // --- LOGIKA PASSCODE & ANIMASI ---
-    function handleEnter(e) {
-        if (e.key === 'Enter') verifyCode();
+    // --- ANIMASI DRONE ---
+    function droneLookDown() { 
+        if(svgAnim.className.baseVal.includes('state-idle')) {
+            document.getElementById('drone-head').style.transform = 'translateY(55px) rotate(5deg)';
+        }
+    }
+    function droneLookIdle() {
+        if(svgAnim.className.baseVal.includes('state-idle')) {
+            document.getElementById('drone-head').style.transform = '';
+        }
     }
 
     function verifyCode() {
-        const inputVal = document.getElementById('passcodeInput').value;
-        if(inputVal === PASSCODE_CORRECT) {
-            updateExpiryTime(); // Simpan sesi login
-            triggerSuccessAnimation();
-        } else {
-            triggerErrorAnimation();
-        }
-    }
-
-    function triggerSuccessAnimation() {
-        svgAnim.className.baseVal = "svg-character state-success";
-        setTimeout(() => { openMainApp(true); }, 1000);
-    }
-
-    function openMainApp(withAnimation) {
-        if (withAnimation) {
-            lockScreen.style.transform = 'scale(1.2)';
-            lockScreen.style.opacity = '0';
+        const val = document.getElementById('passcodeInput').value;
+        if(val === PASSCODE_CORRECT) {
+            updateExpiryTime();
+            svgAnim.className.baseVal = "svg-character state-success";
             setTimeout(() => {
-                lockScreen.style.display = 'none'; // <-- DIUBAH DARI visibility:hidden
-                mainApp.style.display = 'flex';
-                setTimeout(() => mainApp.style.opacity = '1', 50);
-                renderLinks();
-            }, 500);
+                lockScreen.style.opacity = '0';
+                lockScreen.style.transform = 'scale(1.1)';
+                setTimeout(() => {
+                    lockScreen.style.display = 'none';
+                    mainApp.style.display = 'flex';
+                    setTimeout(() => mainApp.style.opacity = '1', 50);
+                    renderLinks();
+                }, 500);
+            }, 800);
         } else {
-            // Langsung buka tanpa animasi (untuk auto-login saat refresh)
-            lockScreen.style.display = 'none';
-            mainApp.style.display = 'flex';
-            mainApp.style.opacity = '1';
-            renderLinks();
+            svgAnim.className.baseVal = "svg-character state-error shake";
+            setTimeout(() => {
+                svgAnim.className.baseVal = "svg-character state-idle";
+                document.getElementById('passcodeInput').value = '';
+            }, 1500);
         }
     }
 
-    function triggerErrorAnimation() {
-        svgAnim.className.baseVal = "svg-character state-error shake-anim";
-        setTimeout(() => {
-            svgAnim.className.baseVal = "svg-character state-idle";
-            document.getElementById('passcodeInput').value = ''; 
-        }, 1500); 
-    }
+    function handleEnter(e) { if (e.key === 'Enter') verifyCode(); }
 
-    // --- LOGIKA APLIKASI (TABS & RENDER LINK) ---
+    // --- APP LOGIC ---
     let currentTab = 'materi';
-
-    function switchTab(tabName) {
-        currentTab = tabName;
-        document.getElementById('tab-materi').className = 'btn-tab ' + (tabName === 'materi' ? 'active' : '');
-        document.getElementById('tab-aplikasi').className = 'btn-tab ' + (tabName === 'aplikasi' ? 'active' : '');
-        document.getElementById('tab-lainnya').className = 'btn-tab ' + (tabName === 'lainnya' ? 'active' : '');
+    function switchTab(t) {
+        currentTab = t;
+        ['materi', 'aplikasi', 'lainnya'].forEach(id => document.getElementById('tab-'+id).className = 'btn-tab ' + (t === id ? 'active' : ''));
         renderLinks();
     }
 
     function renderLinks() {
         const container = document.getElementById('linkContainer');
         container.innerHTML = ''; 
-
-        let targetData = [];
-        if (currentTab === 'materi') targetData = linkMateri;
-        else if (currentTab === 'aplikasi') targetData = linkAplikasi;
-        else if (currentTab === 'lainnya') targetData = linkLainnya;
-
-        if(targetData.length === 0) {
-            container.innerHTML = `<div style="text-align:center; opacity:0.5; padding: 20px 0; font-size:14px;">Belum ada tautan di kategori ini.</div>`;
-            return;
-        }
-
-        targetData.forEach((item) => {
-            const html = `
-                <div class="link-item">
-                    <div class="link-info">
-                        <div class="link-title">${item.name}</div>
-                        <div class="link-url">${item.url}</div>
-                    </div>
-                    <button class="btn-open" onclick="openLink('${item.url}')" title="Buka Tautan">
-                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
-                            <polyline points="15 3 21 3 21 9"></polyline>
-                            <line x1="10" y1="14" x2="21" y2="3"></line>
-                        </svg>
-                    </button>
-                </div>
-            `;
-            container.innerHTML += html;
+        const data = currentTab === 'materi' ? linkMateri : currentTab === 'aplikasi' ? linkAplikasi : linkLainnya;
+        data.forEach(item => {
+            container.innerHTML += `<div class="link-item"><div class="link-info"><div class="link-title">${item.name}</div><div class="link-url">${item.url}</div></div><button class="btn-open" onclick="window.open('${item.url}','_blank')"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg></button></div>`;
         });
     }
 
-    function openLink(url) { window.open(url, '_blank'); }
-
-    // --- UI TOOLS ---
-    function toggleThemeMenu() { 
-        const m = document.getElementById('themeMenu'); 
-        m.style.display = m.style.display === 'flex' ? 'none' : 'flex'; 
-    }
+    // --- THEME & CLOCK ---
+    function toggleThemeMenu() { const m = document.getElementById('themeMenu'); m.style.display = m.style.display === 'flex' ? 'none' : 'flex'; }
+    function setTheme(t) { document.body.className = t; document.getElementById('themeMenu').style.display = 'none'; localStorage.setItem('colinks_theme', t); }
     
-    function setTheme(t) { 
-        document.body.className = t; 
-        document.getElementById('themeMenu').style.display = 'none'; 
-        
-        // Simpan preferensi tema ke localStorage agar tidak reset
-        localStorage.setItem('colinks_theme', t);
-    }
-
-    // Muat tema tersimpan
-    const savedTheme = localStorage.getItem('colinks_theme');
-    if(savedTheme) document.body.className = savedTheme;
+    if(localStorage.getItem('colinks_theme')) document.body.className = localStorage.getItem('colinks_theme');
 
     function updateClock() {
         const now = new Date();
-        const h = String(now.getHours()).padStart(2, '0');
-        const m = String(now.getMinutes()).padStart(2, '0');
-        const s = String(now.getSeconds()).padStart(2, '0');
-        document.getElementById('clock').textContent = `${h}:${m}:${s}`;
-        const dd = String(now.getDate()).padStart(2, '0');
-        const mm = String(now.getMonth() + 1).padStart(2, '0');
-        const yyyy = now.getFullYear();
-        document.getElementById('date').textContent = `${dd}/${mm}/${yyyy}`;
+        document.getElementById('clock').textContent = now.toTimeString().split(' ')[0];
+        document.getElementById('date').textContent = now.toLocaleDateString('id-ID');
     }
 
-    document.addEventListener('click', function(event) {
-        const menu = document.getElementById('themeMenu');
-        const navActions = document.querySelector('.nav-actions');
-        if (menu && menu.style.display === 'flex' && !navActions.contains(event.target)) {
-            menu.style.display = 'none';
-        }
+    document.addEventListener('click', e => {
+        if (!document.querySelector('.nav-actions').contains(e.target)) document.getElementById('themeMenu').style.display = 'none';
     });
 
     setInterval(updateClock, 1000);
     updateClock();
-
+    checkLoginStatus(); // Cek status saat startup
 </script>
 </body>
 </html>
