@@ -72,39 +72,139 @@
             overflow-x: hidden;
         }
 
+        /* --- CAHAYA LATAR BERGERAK (AMBIENT GLOW) --- */
+        .ambient-glow {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100vw; height: 100vh;
+            z-index: 0;
+            pointer-events: none;
+            overflow: hidden;
+        }
+        .ambient-glow::before, .ambient-glow::after {
+            content: '';
+            position: absolute;
+            width: 60vw; height: 60vw;
+            background: var(--primary);
+            filter: blur(120px);
+            opacity: 0.15;
+            transition: background 1.5s ease;
+        }
+        .ambient-glow::before {
+            top: -20%; left: -10%;
+            animation: floatGlow 15s infinite alternate ease-in-out;
+        }
+        .ambient-glow::after {
+            bottom: -20%; right: -10%;
+            animation: floatGlowReverse 20s infinite alternate ease-in-out;
+        }
+        @keyframes floatGlow {
+            0% { transform: translate(0, 0) scale(1); }
+            100% { transform: translate(20%, 20%) scale(1.2); }
+        }
+        @keyframes floatGlowReverse {
+            0% { transform: translate(0, 0) scale(1.2); }
+            100% { transform: translate(-20%, -20%) scale(1); }
+        }
+
+        /* --- LAYAR KUNCI (PASSCODE) --- */
+        .lock-screen {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--bg-body);
+            background-image: linear-gradient(var(--grid-color) 1px, transparent 1px), linear-gradient(90deg, var(--grid-color) 1px, transparent 1px);
+            background-size: 20px 20px;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            transition: opacity 0.5s ease, transform 0.5s ease;
+        }
+        
+        .emoji-display {
+            font-size: 80px;
+            margin-bottom: 20px;
+            display: inline-block;
+        }
+        .anim-idle { animation: floatEmoji 2.5s infinite ease-in-out; }
+        .anim-error { animation: shakeEmoji 0.4s ease-in-out; }
+        .anim-success { animation: popEmoji 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
+        
+        @keyframes floatEmoji {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-15px); }
+        }
+        @keyframes shakeEmoji {
+            0%, 100% { transform: translateX(0); }
+            20%, 60% { transform: translateX(-15px) rotate(-10deg); }
+            40%, 80% { transform: translateX(15px) rotate(10deg); }
+        }
+        @keyframes popEmoji {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.5); }
+            100% { transform: scale(1.2); }
+        }
+
+        .passcode-box {
+            background: var(--card-bg);
+            padding: 30px;
+            border: 2px solid var(--border);
+            border-radius: 0; /* UJUNG LANCIP */
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            width: 300px;
+        }
+        .passcode-input {
+            width: 100%; padding: 12px;
+            background: var(--input-bg); border: 2px solid var(--border);
+            color: var(--text); font-family: 'Share Tech', sans-serif;
+            font-size: 18px; text-align: center; border-radius: 0; /* UJUNG LANCIP */
+            box-sizing: border-box; outline: none; transition: all 0.3s;
+        }
+        .passcode-input:focus { border-color: var(--primary); box-shadow: 0 0 10px var(--primary); }
+        .btn-passcode {
+            background: var(--primary); color: white;
+            border: none; padding: 12px; font-size: 16px;
+            font-family: 'Share Tech', sans-serif; font-weight: bold;
+            cursor: pointer; border-radius: 0; /* UJUNG LANCIP */
+            box-shadow: 0 4px 0 rgba(0,0,0,0.2); transition: all 0.1s;
+        }
+        .btn-passcode:active { transform: translateY(2px); box-shadow: 0 2px 0 rgba(0,0,0,0.2); }
+
+        /* --- APLIKASI UTAMA --- */
         .main-wrapper {
             display: flex;
             flex-direction: column;
             align-items: center;
             width: 100%;
             max-width: 600px;
+            gap: 10px; /* Jarak antara judul dan kotak utama */
             position: relative;
+            z-index: 5;
+            display: none; /* Disembunyikan sampai passcode benar */
         }
 
-        /* --- DESAIN FOLDER TAB UNTUK JUDUL --- */
-        .title-tab {
+        .title-card {
             background-color: var(--card-bg);
-            padding: 10px 30px;
-            border-top-left-radius: 12px;
-            border-top-right-radius: 12px;
+            width: 100%;
+            padding: 25px 0; /* Tinggi Judul Ditambahkan */
+            border-radius: 0; /* UJUNG LANCIP */
             border: 2px solid var(--border);
-            border-bottom: none; /* Menghilangkan border bawah agar menyatu dengan container */
-            box-shadow: 0 -5px 15px rgba(0, 0, 0, 0.05); /* Bayangan hanya di atas */
-            display: inline-flex;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            display: flex;
             justify-content: center;
             align-items: center;
-            z-index: 10;
-            position: relative;
-            margin-bottom: -2px; /* Menarik container ke atas agar border menumpuk dan menyatu */
-            align-self: center; /* Memastikan tab berada di tengah horizontal */
         }
 
-        .title-tab h1 {
+        .title-card h1 {
             margin: 0;
             color: var(--primary);
-            font-size: 32px;
+            font-size: 44px;
             font-weight: 1000;
-            letter-spacing: 6px;
+            letter-spacing: 8px;
             text-transform: uppercase;
             line-height: 1;
         }
@@ -112,55 +212,65 @@
         .container {
             background-color: var(--card-bg);
             width: 100%;
-            height: 615px; /* Tinggi dikembalikan seperti semula */
+            height: 615px; /* Tinggi Kembali Awal */
             padding: 25px;
-            border-radius: 12px;
+            border-radius: 0; /* UJUNG LANCIP */
             border: 2px solid var(--border);
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
             display: flex;
             flex-direction: column;
             box-sizing: border-box;
             position: relative;
-            z-index: 5;
         }
 
         .top-nav { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
         .nav-actions { display: flex; gap: 10px; align-items: center; position: relative; }
 
         .btn-nav-icon {
-            background: var(--primary); color: white !important; border: none; width: 35px; height: 35px;
-            border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center;
+            background: var(--primary); color: white !important; border: none; 
+            width: 40px; height: 40px; /* Diperbesar sedikit agar presisi */
+            border-radius: 0; /* UJUNG LANCIP / PERSEGI */
+            cursor: pointer; display: flex; align-items: center; justify-content: center;
             box-shadow: 0 3px 0 rgba(0,0,0,0.2); text-decoration: none;
+            transition: all 0.1s;
         }
+        .btn-nav-icon:active { transform: translateY(2px); box-shadow: 0 1px 0 rgba(0,0,0,0.2); }
 
         .theme-menu {
-            position: absolute; top: 45px; right: 0; background: var(--card-bg);
-            border: 1px solid var(--border); border-radius: 8px; box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-            display: none; flex-direction: column; z-index: 100; width: 200px; max-height: 280px; overflow-y: auto;
+            position: absolute; top: 50px; right: 0; background: var(--card-bg);
+            border: 2px solid var(--border); border-radius: 0; /* UJUNG LANCIP */
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2); display: none; flex-direction: column; 
+            z-index: 100; width: 200px; max-height: 280px; overflow-y: auto;
         }
         .theme-opt {
-            padding: 10px 15px; cursor: pointer; font-size: 11px; border-bottom: 1px solid var(--border);
+            padding: 12px 15px; cursor: pointer; font-size: 11px; border-bottom: 1px solid var(--border);
             background: var(--card-bg); color: var(--text); font-weight: bold; text-transform: uppercase;
         }
         .theme-opt:hover { background: var(--primary); color: white; }
 
-        /* AREA DAFTAR LINK */
-        .section-header {
-            font-size: 14px;
-            color: var(--primary);
-            font-weight: bold;
-            margin-bottom: 10px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            border-bottom: 1px solid var(--border);
-            padding-bottom: 5px;
+        /* --- TABS --- */
+        .tab-container { position: relative; display: flex; justify-content: center; align-items: center; margin-bottom: 15px; }
+        .tab-line { position: absolute; width: 100%; height: 2px; background: var(--border); z-index: 0; }
+        .tab-buttons { display: flex; gap: 10px; background: var(--card-bg); padding: 0 15px; z-index: 1; }
+
+        .btn-tab {
+            background: var(--input-bg); border: 2px solid var(--border); font-family: 'Share Tech', sans-serif;
+            font-size: 13px; font-weight: bold; color: var(--text); cursor: pointer; padding: 10px 15px;
+            border-radius: 0; /* UJUNG LANCIP */
+            box-shadow: 0 3px 0 var(--border); transition: all 0.1s; text-transform: uppercase;
+        }
+        .btn-tab.active { 
+            color: white !important; background: var(--primary); 
+            border-color: var(--primary); box-shadow: 0 3px 0 rgba(0,0,0,0.2); 
+            transform: translateY(-2px); 
         }
 
+        /* AREA DAFTAR LINK */
         .link-list-container {
             flex-grow: 1;
             background: var(--input-bg);
-            border: 1px solid var(--border);
-            border-radius: 8px;
+            border: 2px solid var(--border);
+            border-radius: 0; /* UJUNG LANCIP */
             padding: 15px;
             overflow-y: auto;
             display: flex;
@@ -173,16 +283,17 @@
             justify-content: space-between;
             align-items: center;
             background: var(--card-bg);
-            border: 1px solid var(--border);
+            border: 2px solid var(--border);
             padding: 12px 15px;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            border-radius: 0; /* UJUNG LANCIP */
+            box-shadow: 0 3px 0 var(--border);
             transition: all 0.2s ease;
         }
 
         .link-item:hover {
             border-color: var(--primary);
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            box-shadow: 0 3px 0 var(--primary);
+            transform: translateY(-2px);
         }
 
         .link-info {
@@ -217,7 +328,7 @@
             border: none;
             width: 42px; 
             height: 42px; 
-            border-radius: 8px;
+            border-radius: 0; /* UJUNG LANCIP */
             cursor: pointer;
             display: flex;
             align-items: center;
@@ -232,23 +343,33 @@
         }
         
         /* Scrollbar Styling */
-        ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-track { background: var(--bg-body); border-radius: 8px; }
-        ::-webkit-scrollbar-thumb { background: var(--primary); border-radius: 8px; }
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: var(--bg-body); border-radius: 0; }
+        ::-webkit-scrollbar-thumb { background: var(--primary); border-radius: 0; border: 1px solid var(--border); }
     </style>
 </head>
 <body class="light-clean">
 
-    <div class="main-wrapper">
+    <div class="ambient-glow"></div>
+
+    <div id="lockScreen" class="lock-screen">
+        <div id="emojiDisplay" class="emoji-display anim-idle">👀</div>
+        <div class="passcode-box">
+            <input type="password" id="passcodeInput" class="passcode-input" placeholder="Masukkan Kode" onkeypress="handleEnter(event)">
+            <button class="btn-passcode" onclick="verifyCode()">BUKA BRANKAS</button>
+        </div>
+    </div>
+
+    <div class="main-wrapper" id="mainApp">
         
-        <div class="title-tab">
+        <div class="title-card">
             <h1>NGAPLIKASI</h1>
         </div>
 
         <div class="container">
             <div class="top-nav">
                  <div id="datetime" style="text-align: left; line-height: 1.2;">
-                    <div id="clock" style="font-size: 22px; font-weight: bold; color: var(--text);">00:00:00</div>
+                    <div id="clock" style="font-size: 24px; font-weight: bold; color: var(--text);">00:00:00</div>
                     <div id="date" style="font-size: 13px; color: var(--text); opacity: 0.8; font-weight: bold;">00/00/0000</div>
                 </div>
 
@@ -309,7 +430,14 @@
                 </div>
             </div>
 
-            <div class="section-header">Aplikasi & Tautan Tersimpan</div>
+            <div class="tab-container">
+                <div class="tab-line"></div>
+                <div class="tab-buttons">
+                    <button class="btn-tab active" id="tab-materi" onclick="switchTab('materi')">MATERI</button>
+                    <button class="btn-tab" id="tab-aplikasi" onclick="switchTab('aplikasi')">APLIKASI</button>
+                    <button class="btn-tab" id="tab-lainnya" onclick="switchTab('lainnya')">LAINNYA</button>
+                </div>
+            </div>
             
             <div id="linkContainer" class="link-list-container">
                 </div>
@@ -318,31 +446,58 @@
     </div>
 
 <script>
-    // ==========================================
-    // MASUKKAN DAFTAR LINK ANDA DI SINI
-    // ==========================================
-    const savedLinks = [
-        {
-            name: "REFORNAM by IRS",
-            url: "https://refornam.vercel.app/"
-        }, 
-        {
-            name: "GETOCK by IRS",
-            url: "https://getock.vercel.app/"
-        }, 
+    // ==============================================================================
+    // [RUANG ISI LINK] - TARUH LINK ANDA DI BAWAH INI SESUAI KATEGORI!
+    // ==============================================================================
+
+    // 1. ISI LINK UNTUK TAB "MATERI" DI SINI
+    const linkMateri = [
+        { name: "Contoh Materi 1", url: "https://contoh-materi.com" },
+        { name: "Contoh Materi 2", url: "https://contoh-materi.com" }
     ];
-    // ==========================================
+
+    // 2. ISI LINK UNTUK TAB "APLIKASI" DI SINI
+    const linkAplikasi = [
+        { name: "REFORNAM by IRS", url: "https://refornam.vercel.app/" }, 
+        { name: "GETOCK by IRS", url: "https://getock.vercel.app/" }
+    ];
+
+    // 3. ISI LINK UNTUK TAB "LAINNYA" DI SINI
+    const linkLainnya = [
+        { name: "Website Lain 1", url: "https://google.com" }
+    ];
+
+    // ==============================================================================
+    // (JANGAN UBAH KODE DI BAWAH INI KECUALI ANDA PAHAM JAVASCRIPT)
+    // ==============================================================================
+
+    let currentTab = 'materi';
+
+    function switchTab(tabName) {
+        currentTab = tabName;
+        // Update styling tombol
+        document.getElementById('tab-materi').className = 'btn-tab ' + (tabName === 'materi' ? 'active' : '');
+        document.getElementById('tab-aplikasi').className = 'btn-tab ' + (tabName === 'aplikasi' ? 'active' : '');
+        document.getElementById('tab-lainnya').className = 'btn-tab ' + (tabName === 'lainnya' ? 'active' : '');
+        
+        renderLinks();
+    }
 
     function renderLinks() {
         const container = document.getElementById('linkContainer');
         container.innerHTML = ''; 
 
-        if(savedLinks.length === 0) {
-            container.innerHTML = `<div style="text-align:center; opacity:0.5; padding: 20px 0; font-size:14px;">Belum ada tautan yang disimpan di dalam script.</div>`;
+        let targetData = [];
+        if (currentTab === 'materi') targetData = linkMateri;
+        else if (currentTab === 'aplikasi') targetData = linkAplikasi;
+        else if (currentTab === 'lainnya') targetData = linkLainnya;
+
+        if(targetData.length === 0) {
+            container.innerHTML = `<div style="text-align:center; opacity:0.5; padding: 20px 0; font-size:14px;">Belum ada tautan di kategori ini.</div>`;
             return;
         }
 
-        savedLinks.forEach((item) => {
+        targetData.forEach((item) => {
             const html = `
                 <div class="link-item">
                     <div class="link-info">
@@ -360,6 +515,45 @@
             `;
             container.innerHTML += html;
         });
+    }
+
+    // --- LOGIKA PASSCODE & EMOJI ---
+    function handleEnter(e) {
+        if (e.key === 'Enter') verifyCode();
+    }
+
+    function verifyCode() {
+        const inputVal = document.getElementById('passcodeInput').value;
+        const emoji = document.getElementById('emojiDisplay');
+        const lockScreen = document.getElementById('lockScreen');
+        const mainApp = document.getElementById('mainApp');
+
+        if(inputVal === '0.Rahasia.0') {
+            // Animasi Benar
+            emoji.innerText = '😎';
+            emoji.className = 'emoji-display anim-success';
+            
+            setTimeout(() => {
+                lockScreen.style.transform = 'scale(1.2)';
+                lockScreen.style.opacity = '0';
+                setTimeout(() => {
+                    lockScreen.style.display = 'none';
+                    mainApp.style.display = 'flex'; // Munculkan Aplikasi
+                    renderLinks(); // Render saat pertama kali masuk
+                }, 500);
+            }, 800);
+        } else {
+            // Animasi Salah
+            emoji.innerText = '😡';
+            emoji.className = 'emoji-display anim-error';
+            
+            // Kembalikan ke emoji diam setelah marah selesai
+            setTimeout(() => {
+                emoji.innerText = '👀';
+                emoji.className = 'emoji-display anim-idle';
+                document.getElementById('passcodeInput').value = ''; // Reset input
+            }, 600);
+        }
     }
 
     function openLink(url) {
@@ -391,14 +585,13 @@
     document.addEventListener('click', function(event) {
         const menu = document.getElementById('themeMenu');
         const navActions = document.querySelector('.nav-actions');
-        if (menu.style.display === 'flex' && !navActions.contains(event.target)) {
+        if (menu && menu.style.display === 'flex' && !navActions.contains(event.target)) {
             menu.style.display = 'none';
         }
     });
 
     setInterval(updateClock, 1000);
     updateClock();
-    renderLinks(); 
 
 </script>
 </body>
