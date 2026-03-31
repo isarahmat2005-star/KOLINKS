@@ -62,14 +62,29 @@
             background-size: 20px 20px;
             color: var(--text);
             display: flex;
-            justify-content: center;
+            flex-direction: column; /* Mengubah arah flex menjadi kolom untuk menampung tali */
             align-items: center;
             min-height: 100dvh;
             margin: 0;
-            padding: 15px;
+            padding: 0 15px 15px 15px; /* Menghapus padding atas agar tali bisa nempel ke atas */
             box-sizing: border-box;
             transition: all 0.3s ease;
             overflow-x: hidden;
+            position: relative; /* Untuk memposisikan tali relatif terhadap body */
+        }
+
+        /* --- DESAIN TALI LANYARD --- */
+        .lanyard {
+            width: 15px; /* Lebar tali */
+            background-color: var(--text); /* Warna tali mengikuti teks agar kontras */
+            height: 15vh; /* Panjang tali dari atas layar */
+            min-height: 50px; /* Panjang minimal tali */
+            border-bottom-left-radius: 5px;
+            border-bottom-right-radius: 5px;
+            position: relative;
+            z-index: 4; /* Di bawah container */
+            margin-bottom: -15px; /* Menarik container agar terlihat terkait dengan tali */
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2) inset; /* Efek kedalaman pada tali */
         }
 
         .main-wrapper {
@@ -78,36 +93,14 @@
             align-items: center;
             width: 100%;
             max-width: 600px;
-            gap: 5px;
-        }
-
-        .title-card {
-            background-color: var(--card-bg);
-            width: 100%;
-            padding: 12px 0;
-            border-radius: 12px;
-            border: 2px solid var(--border);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 6;
-        }
-
-        .title-card h1 {
-            margin: 0;
-            color: var(--primary);
-            font-size: 44px;
-            font-weight: 1000;
-            letter-spacing: 8px;
-            text-transform: uppercase;
-            line-height: 1;
+            position: relative; /* Penting untuk lubang gantungan */
+            z-index: 5; /* Di atas tali */
         }
 
         .container {
             background-color: var(--card-bg);
             width: 100%;
-            height: 615px; /* Tinggi dipertahankan sesuai aslinya */
+            height: 615px;
             padding: 25px;
             border-radius: 12px;
             border: 2px solid var(--border);
@@ -116,10 +109,64 @@
             flex-direction: column;
             box-sizing: border-box;
             position: relative;
-            z-index: 5;
         }
 
-        .top-nav { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        /* --- LUBANG GANTUNGAN (ID CARD HOLE) --- */
+        .id-hole-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            margin-bottom: 20px; /* Jarak antara lubang dan konten di bawahnya */
+            margin-top: -10px; /* Menarik ke atas sedikit mendekati tepi atas container */
+        }
+
+        .id-hole {
+            width: 60px; /* Lebar lubang pil */
+            height: 15px; /* Tinggi lubang */
+            background-color: var(--bg-body); /* Warna bagian dalam lubang sama dengan background luar */
+            border-radius: 20px; /* Membuat bentuk pil */
+            border: 2px solid var(--primary); /* Pinggiran lubang menggunakan warna utama */
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2); /* Bayangan dalam memberi efek lubang nyata */
+            position: relative;
+        }
+
+        /* Tali clip yang mengait ke lubang */
+        .clip {
+            position: absolute;
+            top: -15px; /* Menggantung dari tali di atasnya */
+            left: 50%;
+            transform: translateX(-50%);
+            width: 25px;
+            height: 25px;
+            border: 3px solid var(--text);
+            border-radius: 5px;
+            z-index: 3;
+            clip-path: polygon(0% 0%, 100% 0%, 100% 70%, 70% 100%, 30% 100%, 0% 70%); /* Bentuk jepitan sederhana */
+        }
+
+
+        .header-area {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid var(--primary);
+            padding-bottom: 15px;
+            margin-bottom: 20px;
+        }
+
+        /* Judul yang sudah disatukan */
+        .app-title {
+            margin: 0;
+            color: var(--primary);
+            font-size: 32px; /* Disesuaikan agar muat sebaris */
+            font-weight: 1000;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            line-height: 1;
+        }
+
+        .top-nav { display: flex; justify-content: space-between; align-items: center; }
         .nav-actions { display: flex; gap: 10px; align-items: center; position: relative; }
 
         .btn-nav-icon {
@@ -152,7 +199,7 @@
         }
 
         .link-list-container {
-            flex-grow: 1; /* Mengisi sisa ruang */
+            flex-grow: 1;
             background: var(--input-bg);
             border: 1px solid var(--border);
             border-radius: 8px;
@@ -234,18 +281,27 @@
 </head>
 <body class="light-clean">
 
-    <div class="main-wrapper">
-        
-        <div class="title-card">
-            <h1>NGAPLIKASI</h1>
-        </div>
+    <div class="lanyard"></div>
 
+    <div class="main-wrapper">
         <div class="container">
-            <div class="top-nav">
-                 <div id="datetime" style="text-align: left; line-height: 1.2;">
+            <div class="id-hole-container">
+                 <div class="clip"></div>
+                <div class="id-hole"></div>
+            </div>
+
+            <div class="header-area">
+                <div>
+                    <h1 class="app-title">NGAPLIKASI</h1>
+                </div>
+                 <div id="datetime" style="text-align: right; line-height: 1.2;">
                     <div id="clock" style="font-size: 22px; font-weight: bold; color: var(--text);">00:00:00</div>
                     <div id="date" style="font-size: 13px; color: var(--text); opacity: 0.8; font-weight: bold;">00/00/0000</div>
                 </div>
+            </div>
+
+            <div class="top-nav">
+                <div></div>
 
                 <div class="nav-actions">
                     <a href="https://lynk.id/isaproject/0581ez0729vx" target="_blank" class="btn-nav-icon" style="background: #6f4e37;" title="Support Me">
@@ -318,57 +374,16 @@
     // ==========================================
     const savedLinks = [
         {
-            name: "Refornam App",
+            name: "REFORNAM by IRS",
             url: "https://refornam.vercel.app/"
-        },
+        }, 
         {
-            name: "Refornam App",
-            url: "https://refornam.vercel.app/"
-        },
-        {
-            name: "Refornam App",
-            url: "https://refornam.vercel.app/"
-        },
-        {
-            name: "Refornam App",
-            url: "https://refornam.vercel.app/"
-        },
-        {
-            name: "Refornam App",
-            url: "https://refornam.vercel.app/"
-        },
-        {
-            name: "Refornam App",
-            url: "https://refornam.vercel.app/"
-        },
-        {
-            name: "Refornam App",
-            url: "https://refornam.vercel.app/"
-        },
-        {
-            name: "Refornam App",
-            url: "https://refornam.vercel.app/"
-        },
-        {
-            name: "Refornam App",
-            url: "https://refornam.vercel.app/"
-        },
-        {
-            name: "Refornam App",
-            url: "https://refornam.vercel.app/"
-        },
-        {
-            name: "Refornam App",
-            url: "https://refornam.vercel.app/"
-        },
-        {
-            name: "Refornam App",
-            url: "https://refornam.vercel.app/"
-        },
+            name: "GETOCK by IRS",
+            url: "https://getock.vercel.app/"
+        }, 
     ];
     // ==========================================
 
-    // Fungsi Render Daftar Link
     function renderLinks() {
         const container = document.getElementById('linkContainer');
         container.innerHTML = ''; 
@@ -398,12 +413,10 @@
         });
     }
 
-    // Fungsi Buka Link
     function openLink(url) {
         window.open(url, '_blank');
     }
 
-    // Fungsi Tema
     function toggleThemeMenu() { 
         const m = document.getElementById('themeMenu'); 
         m.style.display = m.style.display === 'flex' ? 'none' : 'flex'; 
@@ -414,7 +427,6 @@
         document.getElementById('themeMenu').style.display = 'none'; 
     }
 
-    // Fungsi Jam Real-time
     function updateClock() {
         const now = new Date();
         const h = String(now.getHours()).padStart(2, '0');
@@ -427,7 +439,6 @@
         document.getElementById('date').textContent = `${dd}/${mm}/${yyyy}`;
     }
 
-    // Event Listener untuk menutup menu tema jika diklik di luar area
     document.addEventListener('click', function(event) {
         const menu = document.getElementById('themeMenu');
         const navActions = document.querySelector('.nav-actions');
@@ -436,7 +447,6 @@
         }
     });
 
-    // Inisialisasi awal
     setInterval(updateClock, 1000);
     updateClock();
     renderLinks(); 
