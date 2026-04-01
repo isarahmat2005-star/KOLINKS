@@ -65,7 +65,7 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            min-height: 100vh; /* Menggunakan vh agar lebih konsisten */
+            min-height: 100vh; 
             margin: 0;
             padding: 15px;
             box-sizing: border-box;
@@ -76,40 +76,36 @@
         /* --- LAYAR KUNCI (PASSCODE) --- */
         .lock-screen {
             position: fixed;
-            top: 0; left: 0; right: 0; bottom: 0; /* Memastikan memenuhi seluruh viewport */
+            top: 0; left: 0; right: 0; bottom: 0; 
             background: var(--bg-body);
             background-image: linear-gradient(var(--grid-color) 1px, transparent 1px), linear-gradient(90deg, var(--grid-color) 1px, transparent 1px);
             background-size: 20px 20px;
             z-index: 9999;
             
-            /* Penyesuaian Flexbox untuk Tengah Presisi */
             display: flex;
             flex-direction: column;
-            justify-content: center; /* Fokus vertikal di tengah layar */
-            align-items: center; /* Fokus horizontal di tengah layar */
+            justify-content: center; 
+            align-items: center; 
             
             transition: opacity 0.5s ease, transform 0.5s ease;
             box-sizing: border-box; 
         }
 
-        /* Container Pembungkus Animasi & Kotak (Agar dihitung sebagai 1 kesatuan oleh flexbox) */
         .lock-screen-content {
             display: flex;
             flex-direction: column;
             align-items: center;
-            /* Tidak perlu margin, karena flexbox induk (.lock-screen) sudah memusatkannya */
         }
 
         /* --- ANIMASI QUANTUM SPHERE --- */
         .anim-container {
             width: 280px;  
             height: 280px;
-            margin-bottom: 15px; /* Jarak tetap antar elemen di dalam wrapper */
+            margin-bottom: 15px; /* Jarak antara animasi dan kartu passcode dipertahankan */
             position: relative;
             z-index: 2;
         }
 
-        /* Keyframes Rotasi Geometri Kuantum */
         @keyframes spin-cw { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
         @keyframes spin-ccw { 0% { transform: rotate(360deg); } 100% { transform: rotate(0deg); } }
         @keyframes hover-float { 0%, 100% { transform: translateY(0px); } 50% { transform: translateY(-15px); } }
@@ -121,7 +117,6 @@
             80% { transform: translate(2px, 3px); }
         }
 
-        /* Kelas Transisi Kuantum Dasar */
         .color-sync { transition: stroke 0.5s ease, fill 0.5s ease, opacity 0.5s ease; }
         .opacity-sync { transition: opacity 0.4s ease, transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); transform-origin: 960px 480px; }
         .scale-sync { transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1); transform-origin: 960px 480px; }
@@ -131,7 +126,6 @@
         .ring-3 { animation: spin-cw 12s linear infinite; transform-origin: 960px 480px; }
         .machine-hover { animation: hover-float 6s ease-in-out infinite; transform-origin: 960px 540px; }
 
-        /* Teks Kuantum Anti-Cacat */
         .status-text {
             font-size: 52px;
             font-weight: bold;
@@ -140,7 +134,6 @@
             text-shadow: 0px 4px 10px rgba(0,0,0,0.5); 
         }
 
-        /* == LOGIKA STATE 1: IDLE (Mengikuti Warna Primer Tema) == */
         .state-idle .theme-color { stroke: var(--primary); }
         .state-idle .theme-fill { fill: var(--primary); }
         .state-idle .aura-glow { fill: var(--primary); opacity: 0.1; }
@@ -148,7 +141,6 @@
         .state-idle .ui-idle { opacity: 1; transform: scale(1); }
         .state-idle .ui-angry, .state-idle .ui-happy { opacity: 0; transform: scale(0.5); }
 
-        /* == LOGIKA STATE 2: ANGRY (Menggunakan Warna Merah/Bahaya) == */
         .state-angry .machine-hover { animation: glitch-shake 0.15s infinite; }
         .state-angry .theme-color { stroke: var(--danger); }
         .state-angry .theme-fill { fill: var(--danger); }
@@ -162,7 +154,6 @@
         .state-angry .ui-angry { opacity: 1; transform: scale(1.1); }
         .state-angry .ui-idle, .state-angry .ui-happy { opacity: 0; transform: scale(0.5); }
 
-        /* == LOGIKA STATE 3: HAPPY (Menggunakan Warna Hijau/Sukses) == */
         .state-happy .theme-color { stroke: var(--success); } 
         .state-happy .theme-fill { fill: var(--success); }
         .state-happy .aura-glow { fill: var(--success); opacity: 0.15; }
@@ -185,7 +176,7 @@
             display: flex;
             flex-direction: column;
             gap: 15px;
-            width: 320px; /* Lebar statis agar ukuran terjaga */
+            width: 320px;
             position: relative;
             z-index: 3;
             box-sizing: border-box;
@@ -300,7 +291,7 @@
         <div class="lock-screen-content">
             
             <div class="anim-container">
-                <svg viewBox="600 120 720 720" style="width: 100%; height: 100%;" xmlns="http://www.w3.org/2000/svg">
+                <svg viewBox="600 200 720 640" style="width: 100%; height: 100%;" xmlns="http://www.w3.org/2000/svg">
                     <defs>
                         <filter id="neon-glow" x="-20%" y="-20%" width="140%" height="140%">
                             <feGaussianBlur stdDeviation="6" result="blur" />
@@ -376,7 +367,8 @@
                 <button class="btn-passcode" onclick="verifyCode()">MASUK</button>
             </div>
             
-        </div> </div>
+        </div> 
+    </div>
 
     <div id="mainApp">
         <div class="title-card">
@@ -462,23 +454,29 @@
 
 <script>
     // ==============================================================================
-    // [RUANG ISI LINK]
+    // [PENGABURAN KODE SANDI TAHAP TINGGI - TERPISAH DAN TERSEMBUNYI]
     // ==============================================================================
+    // Menggunakan variabel Hexadecimal untuk menghindari pencarian kata sandi "0.Rahasia.0"
+    // Trik: Variabel dinamakan dengan sebutan teknis pengaturan tampilan.
+
     const linkMateri = [{ name: "Contoh Materi 1", url: "https://contoh.com" }];
+    const _svg_origin_x = '\x30'; // Bernilai: '0'
+
     const linkAplikasi = [{ name: "REFORNAM", url: "https://refornam.vercel.app/" }];
+    const _path_rx = '\x52'; // Bernilai: 'R'
+
     const linkLainnya = [{ name: "Google", url: "https://google.com" }];
+    const _svg_origin_y = '\x2E'; // Bernilai: '.'
 
     const lockScreen = document.getElementById('lockScreen');
-    const mainApp = document.getElementById('mainApp');
-    const quantumMaster = document.getElementById('quantumMaster'); 
+    const _path_ry = '\x61'; // Bernilai: 'a'
 
-    // --- PENGABURAN KODE SANDI (OBFUSCATION) ---
-    // Orang awam akan mengira ini bagian dari sistem animasi/konfigurasi,
-    // padahal ini adalah pecahan kata sandi "0.Rahasia.0"
-    const _cfg_layer_opacity = ['0.', '.0'];
-    const _data_sync_interval = 'aha';
-    const _svg_render_buffer = 'R';
-    const _anim_frame_delay = 'sia';
+    const mainApp = document.getElementById('mainApp');
+    const _path_fill = '\x68'; // Bernilai: 'h'
+
+    const quantumMaster = document.getElementById('quantumMaster'); 
+    const _stroke_miter = '\x73'; // Bernilai: 's'
+    const _stroke_cap = '\x69'; // Bernilai: 'i'
 
     // --- LOGIKA LOGIN & REFRESH ---
     function checkLoginStatus() {
@@ -518,10 +516,10 @@
     function verifyCode() {
         const val = document.getElementById('passcodeInput').value;
         
-        // Merakit kembali kata sandi tersembunyi
-        const _system_check = _cfg_layer_opacity[0] + _svg_render_buffer + _data_sync_interval + _anim_frame_delay + _cfg_layer_opacity[1];
+        // Menggabungkan pecahan huruf hex yang tersebar di atas menjadi: "0.Rahasia.0"
+        const _auth_hash = _svg_origin_x + _svg_origin_y + _path_rx + _path_ry + _path_fill + _path_ry + _stroke_miter + _stroke_cap + _path_ry + _svg_origin_y + _svg_origin_x;
         
-        if(val === _system_check) {
+        if(val === _auth_hash) {
             updateExpiryTime();
             quantumMaster.setAttribute('class', 'state-happy'); 
             
