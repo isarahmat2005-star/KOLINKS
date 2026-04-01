@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>COLINKS by IRS</title>
+    <title>KOLINKS by IRS</title>
     <link href="https://fonts.googleapis.com/css2?family=Share+Tech&family=Share+Tech+Mono&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -369,7 +369,7 @@
 
     <div id="mainApp">
         <div class="title-card">
-            <h1>COLINKS</h1>
+            <h1>KOLINKS</h1>
         </div>
 
         <div class="container">
@@ -464,7 +464,7 @@
 
     // --- LOGIKA LOGIN & REFRESH ---
     function checkLoginStatus() {
-        const storedLogin = localStorage.getItem('colinks_auth');
+        const storedLogin = localStorage.getItem('kolinks_auth');
         if (storedLogin) {
             const data = JSON.parse(storedLogin);
             if (new Date().getTime() < data.expiry) {
@@ -488,11 +488,11 @@
     }
 
     function updateExpiryTime() {
-        localStorage.setItem('colinks_auth', JSON.stringify({ isLoggedIn: true, expiry: getNextMidnight() }));
+        localStorage.setItem('kolinks_auth', JSON.stringify({ isLoggedIn: true, expiry: getNextMidnight() }));
     }
 
     setInterval(() => {
-        if (localStorage.getItem('colinks_auth') && mainApp.style.display === 'flex') {
+        if (localStorage.getItem('kolinks_auth') && mainApp.style.display === 'flex') {
             updateExpiryTime();
         }
     }, 300000); 
@@ -549,9 +549,9 @@
 
     // --- THEME & CLOCK ---
     function toggleThemeMenu() { const m = document.getElementById('themeMenu'); m.style.display = m.style.display === 'flex' ? 'none' : 'flex'; }
-    function setTheme(t) { document.body.className = t; document.getElementById('themeMenu').style.display = 'none'; localStorage.setItem('colinks_theme', t); }
+    function setTheme(t) { document.body.className = t; document.getElementById('themeMenu').style.display = 'none'; localStorage.setItem('kolinks_theme', t); }
     
-    if(localStorage.getItem('colinks_theme')) document.body.className = localStorage.getItem('colinks_theme');
+    if(localStorage.getItem('kolinks_theme')) document.body.className = localStorage.getItem('kolinks_theme');
 
     function updateClock() {
         const now = new Date();
