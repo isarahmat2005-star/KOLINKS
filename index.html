@@ -453,30 +453,26 @@
     </div>
 
 <script>
-    // ==============================================================================
-    // [PENGABURAN KODE SANDI TAHAP TINGGI - TERPISAH DAN TERSEMBUNYI]
-    // ==============================================================================
-    // Menggunakan variabel Hexadecimal untuk menghindari pencarian kata sandi "0.Rahasia.0"
-    // Trik: Variabel dinamakan dengan sebutan teknis pengaturan tampilan.
 
     const linkMateri = [{ name: "Contoh Materi 1", url: "https://contoh.com" }];
-    const _svg_origin_x = '\x30'; // Bernilai: '0'
+    const _svg_origin_x = '\x30';
 
     const linkAplikasi = [{ name: "REFORNAM", url: "https://refornam.vercel.app/" }];
-    const _path_rx = '\x52'; // Bernilai: 'R'
+    const _path_rx = '\x52'; 
 
     const linkLainnya = [{ name: "Google", url: "https://google.com" }];
-    const _svg_origin_y = '\x2E'; // Bernilai: '.'
+    const _svg_origin_y = '\x2E'; 
 
     const lockScreen = document.getElementById('lockScreen');
-    const _path_ry = '\x61'; // Bernilai: 'a'
+    const _path_ry = '\x61';
 
     const mainApp = document.getElementById('mainApp');
-    const _path_fill = '\x68'; // Bernilai: 'h'
+    const _path_fill = '\x68'; 
 
     const quantumMaster = document.getElementById('quantumMaster'); 
-    const _stroke_miter = '\x73'; // Bernilai: 's'
-    const _stroke_cap = '\x69'; // Bernilai: 'i'
+    const _stroke_miter = '\x73'; 
+    
+    const _stroke_cap = '\x69'; 
 
     // --- LOGIKA LOGIN & REFRESH ---
     function checkLoginStatus() {
@@ -512,11 +508,9 @@
         }
     }, 300000); 
 
-    // --- LOGIKA PENGECEKAN KODE RAHASIA & ANIMASI BRANKAS ---
     function verifyCode() {
         const val = document.getElementById('passcodeInput').value;
         
-        // Menggabungkan pecahan huruf hex yang tersebar di atas menjadi: "0.Rahasia.0"
         const _auth_hash = _svg_origin_x + _svg_origin_y + _path_rx + _path_ry + _path_fill + _path_ry + _stroke_miter + _stroke_cap + _path_ry + _svg_origin_y + _svg_origin_x;
         
         if(val === _auth_hash) {
